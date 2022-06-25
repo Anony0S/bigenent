@@ -9,8 +9,10 @@ $(function () {
     });
 
     const form = layui.form;
+    const layer = layui.layer
+    const baseUrl = 'http://www.liulongbin.top:3007'
     // 定义校验规则
-    form.verify = ({
+    form.verify ({
         // 自定义一个叫 pwd 的校验规则
         pwd: [/^[\S]{6,12}$/, "密码必须6到12位，且不能出现空格"],
         // 校验两次密码是否一致的规则
@@ -23,4 +25,43 @@ $(function () {
             if (pwd !== val) return "两次密码不一致"
         },
     });
+
+    $('#form-reg').on('submit', function(e) {
+        e.preventDefault();
+        console.log(1);
+        $.ajax({
+            type: 'POST',
+            url: baseUrl + '/api/reguser',
+            data: {
+                username: $('.reg-box [name=username]').val().trim(),
+                password: $('.reg-box [name=password]').val(),
+            },
+            success: res => {
+                const {status, message} = res;
+                layer.msg(message)
+                if(status !== 0) return
+                // 注册成功后跳转到登录界面
+                $('#link_login').click();
+            }
+        })
+    })
+
+    // 监听登录表单，发送登录请求。
+    $('#form-login').on('submit', function(e) {
+        e.preventDefault();
+        const data = $('#form-login').serialize();
+        $.ajax({
+            type: 'POST',
+            url: baseUrl + '/api/login',
+            data,
+            success: res => {
+                const {status, message} = res;
+                layer.msg(message);
+                if(status !== 0) return
+                // 登录成功之后将 token 保存到 localStorage
+                localStorage.setItem("tocken", res.tocken)
+                location.href = "./index.html"
+            }
+        })
+    })
 });
