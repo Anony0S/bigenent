@@ -10,7 +10,6 @@ $(function () {
 
     const form = layui.form;
     const layer = layui.layer
-    const baseUrl = 'http://www.liulongbin.top:3007'
     // 定义校验规则
     form.verify ({
         // 自定义一个叫 pwd 的校验规则
@@ -31,7 +30,7 @@ $(function () {
         console.log(1);
         $.ajax({
             type: 'POST',
-            url: baseUrl + '/api/reguser',
+            url: '/api/reguser',
             data: {
                 username: $('.reg-box [name=username]').val().trim(),
                 password: $('.reg-box [name=password]').val(),
@@ -52,16 +51,16 @@ $(function () {
         const data = $('#form-login').serialize();
         $.ajax({
             type: 'POST',
-            url: baseUrl + '/api/login',
+            url: '/api/login',
             data,
             success: res => {
                 const {status, message} = res;
                 layer.msg(message);
                 if(status !== 0) return
                 // 登录成功之后将 token 保存到 localStorage
-                localStorage.setItem("tocken", res.tocken)
-                location.href = "./index.html"
-            }
+                localStorage.setItem("token", res.token)
+                location.href = "./index.html" 
+            },
         })
     })
 });
